@@ -1,62 +1,67 @@
-'use client';
-
-import React, { useState } from 'react';
+"use client";
+import { useState } from "react";
 
 const Airesume = () => {
+  const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState([]);
-  const [inputValue, setInputValue] = useState('');
 
-  const handleSendMessage = () => {
-    if (inputValue.trim() !== '') {
-      setMessages([...messages, { text: inputValue, sender: 'user' }]);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-      // 사용자 메시지를 보낸 후 AI 응답 추가
-      const aiResponse = generateAIResponse(inputValue);
-      setMessages([...messages, { text: inputValue, sender: 'user' }, { text: aiResponse, sender: 'assistant' }]);
+    // 사용자 메시지를 추가
+    const newMessages = [...messages, { user: "you", text: question }];
+    setMessages(newMessages);
+    setQuestion("");
 
-      // 입력 필드 초기화
-      setInputValue('');
-    }
-  };
+    // 서버로 질문 전송
+    const res = await fetch("http://localhost:5001/sendMessage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ question }),
+    });
 
-  const handleInputChange = (e) => {
-    // 엔터키 입력 시 메시지 전송
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSendMessage();
-    } else {
-      setInputValue(e.target.value);
-    }
-  };
-
-  const generateAIResponse = (userMessage) => {
-    // 여기에 AI 응답 생성 로직을 작성하세요
-    return "AI가 생성한 응답입니다.";
+    const data = await res.json();
+    // 서버 응답을 추가
+    setMessages([...newMessages, { user: "bot", text: data.response }]);
   };
 
   return (
-    <div className="Airesume-container">
-      <div className="Airesume-chatWindow">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`${message.sender === 'user' ? 'user' : 'assistant'}`}
-          >
-            {message.text}
-          </div>
-        ))}
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">
+        Chat with Resume-based AI chatbot
+      </h1>
+      <div className="mb-4">
+        <div className="border border-gray-300 p-4 h-96 overflow-y-scroll">
+          {messages.map((msg, index) => (
+            <div
+              key={index}
+              className={`my-2 ${
+                msg.user === "you" ? "text-right" : "text-left"
+              }`}
+            >
+              <strong>{msg.user === "you" ? "You" : "Bot"}:</strong> {msg.text}
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="Airesume-inputContainer">
-        <textarea
-          className="input"
-          value={inputValue}
-          onChange={handleInputChange}
-          placeholder="메시지를 입력하세요..."
+      <form onSubmit={handleSubmit} className="flex">
+        <input
+          type="text"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="저에 대해 궁금한 점을 검색해 주세요."
+          className="flex-1 p-2 text-lg border border-gray-400 rounded-l"
+          required
         />
-        <button className="Airesume-sendButton" onClick={handleSendMessage}>
-          전송
+        <button
+          type="submit"
+          className="p-2 text-lg bg-green-500 text-white rounded-r"
+        >
+          Send
         </button>
-      </div>
+      </form>
     </div>
   );
 };
