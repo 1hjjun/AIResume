@@ -14,7 +14,7 @@ const Airesume = () => {
     setQuestion("");
 
     // 서버로 질문 전송
-    const res = await fetch("http://api.junresume.com/sendMessage", {
+    const res = await fetch("https://api.junresume.com/sendMessage", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
