@@ -1,9 +1,38 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Airesume = () => {
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState([]);
+  const [threadId, setThreadId] = useState("");
+
+  useEffect(() => {
+    // 컴포넌트가 마운트될 때 로컬 스토리지에서 thread_id 확인
+    let storedThreadId = localStorage.getItem("thread_id");
+
+    if (storedThreadId === null || storedThreadId == "undefined") {
+      // thread_id가 없으면 새로 생성
+      createNewThread();
+    } else {
+      setThreadId(storedThreadId);
+    }
+  }, []);
+
+  const createNewThread = async () => {
+    const res = await fetch("https://api.junresume.com/createNewThread", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    });
+    const data = await res.json();
+    const newThreadId = data.thread_id;
+
+    // 새로 생성된 thread_id를 로컬 스토리지에 저장
+    localStorage.setItem("thread_id", newThreadId);
+    setThreadId(newThreadId);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -19,7 +48,7 @@ const Airesume = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ thread_id: threadId, question }),
     });
 
     const data = await res.json();
