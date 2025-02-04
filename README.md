@@ -1,5 +1,3 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ## 프로젝트 제목
 
 OpenAI의 AI Assistant API를 사용한 이력서.txt 기반 챗봇 기능이 있는 웹페이지. 
@@ -15,8 +13,8 @@ Python 코드를 작성해 Financial DoS 취약점 해결.
 
 ## 정보
 URL : www.junresume.com  
-Frontend code : Next.js, React, TailwindCSS  
-Backend code : python Flask, ChatGPT AI Assistant API  
+Frontend code : Next.js, React, TailwindCSS - Vercel에 배포  
+Backend code : python Flask, ChatGPT AI Assistant API - EC2 서버  
 도메인 배포 : 가비아, AWS Route53  
 Server : AWS EC2 nohup 실행, Nginx로 포트포워딩, HTTPS 보안 인증서 발급  
 DB : mongoDB - 질문 내용 로깅 및 동일 IP 시간당 질문 개수 제한 기능 (Financial DoS 예방)  
